@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+int lower = 0, upper = 235, count = 1; 
 FILE *fptr;
 int i = 0;
 bool sensors [235];
@@ -10,25 +11,29 @@ bool sensors [235];
 int main() {
     srand(time(NULL));
 
-    for(i = 0; i<=235; i++) {
-        sensors[i] = rand() % 2;
-    }
-
+    CreateSensors();
     SwitchRandomSensors();
-     
+
     return 0;
 }
 
-SwitchRandomSensors() {
+
+
+SwitchRandomSensors() { // Switches 20 random sensors true>false / false>true
     fptr = fopen("C:\\SensorFiles\\SensorFile.txt","w");
 
-    for(i = 0; i < 236; i++) {
-        fwrite(sensors[i] ? "1" : "0", sizeof(char), 1, fptr);
+    for(i = 0; i < 21; i++) {
+        int x = (rand() % (upper - lower + 1)) + lower;
     }
 
     fclose(fptr);
 }
 
-//int lower = 0, upper = 235, count = 1;
-//while (true) {} 
-// int x = (rand() % (upper - lower + 1)) + lower;
+CreateSensors() { // Creates 236 sensors and writes them to a file with random outcome on true/false
+    fptr = fopen("C:\\SensorFiles\\SensorFile.txt","w");
+    for(i = 0; i < 236; i++) {
+        sensors[i] = rand() % 2;
+        fwrite(sensors[i] ? "1" : "0", sizeof(char), 1, fptr);
+    }
+    fclose(fptr);
+}
