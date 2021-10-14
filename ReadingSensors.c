@@ -11,30 +11,32 @@ unsigned int currentSensors [15];
 unsigned int newSensors [15];
 
 int main() {
-    resetArrays();
+    createArrays();
 
-    // Loop This
-    fptr = fopen("C:\\SensorFiles\\SensorFile.txt","r");
-    char tempChunk [17] = "";
-    int i = 0;
-    int x = 0;
+    while (true) {
+        
+        char tempChunk [17] = "";
+        int i = 0;
+        int x = 0;
 
-    while ((c = getc(fptr)) != EOF) {
-        char tmp = (char)c;
-        size_t len = strlen(tempChunk);
-        snprintf(tempChunk + len, sizeof tempChunk - len, "%c", tmp);
-        x++;
-        if (x == 16) {
-            newSensors[i] = convert(atoll(tempChunk));
-            memset(&tempChunk[0], 0, sizeof(tempChunk));
-            x = 0;
-            i++;
+        fptr = fopen("C:\\SensorFiles\\SensorFile.txt","r");
+        while ((c = getc(fptr)) != EOF) {
+            char tmp = (char)c;
+            size_t len = strlen(tempChunk);
+            snprintf(tempChunk + len, sizeof tempChunk - len, "%c", tmp);
+            x++;
+            if (x == 16) {
+                newSensors[i] = convert(atoll(tempChunk));
+                memset(&tempChunk[0], 0, sizeof(tempChunk));
+                x = 0;
+                i++;
+            }
         }
+        fclose(fptr);
+        printf("\n--------------------");
+        CheckActiveSensors();
+        overwriteArray();
     }
-    fclose(fptr);
-    CheckActiveSensors();
-    overwriteArrays();
-    // Loop This ^
 
     return 0;
 }
@@ -55,16 +57,17 @@ long decimalToBinary(int decimalnum) {
 CheckActiveSensors() { // Check and alarm switched sensors
     int i = 0;
     int j = 0;
+    int n = 0;
     for (i = 0; i <= 15; i++) {
-        if (currentSensors[i] != newSensors[i]) {
-            char currentNewSensors[17] = atoll(decimalToBinary(newSensors[i])); // Atoll wants const char *
-            char currentCurrentSensors[17] = atoll(decimalToBinary(currentSensors[i])); // Atoll wants const char *
+        if (newSensors[i] != currentSensors[i]) {
+            unsigned int tempXor = newSensors[i] ^ currentSensors[i];
             for (j = 0; j <=15; j++) {
-                if (currentCurrentSensors[j] != currentNewSensors[j]) {
-                    printf("\nSensor number %d has switched state", j);
-                }
+                if(tempXor & (1 << j) != 0) {
+                    printf("\nsensor %d switched ", n);
+                    n ++;
+                }    
             }
-        }
+        } 
     }
 }
 
@@ -74,7 +77,7 @@ delay(int number_of_seconds) { // Creates a time delay
     while (clock() < start_time + milli_seconds);
 }
 
-resetArrays() {
+createArrays() {
     int i = 0;
     for (i = 0; i <= 15; i++) {
         currentSensors[i] = 0;
@@ -82,7 +85,7 @@ resetArrays() {
     }
 }
 
-overwriteArrays() {
+overwriteArray() {
     int i = 0;
     for (i = 0; i < 15; i++) {
         currentSensors[i] = newSensors[i];
