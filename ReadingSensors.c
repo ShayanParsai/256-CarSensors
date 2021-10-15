@@ -12,9 +12,8 @@ unsigned int newSensors [15];
 
 int main() {
     createArrays();
-
     while (true) {
-        
+        delay(1);
         char tempChunk [17] = "";
         int i = 0;
         int x = 0;
@@ -33,9 +32,10 @@ int main() {
             }
         }
         fclose(fptr);
-        printf("\n--------------------");
+        printf("\n---Checking sensors---");
         CheckActiveSensors();
         overwriteArray();
+        fflush(stdout);
     }
 
     return 0;
@@ -56,17 +56,17 @@ long decimalToBinary(int decimalnum) {
 
 CheckActiveSensors() { // Check and alarm switched sensors
     int i = 0;
-    int j = 0;
-    int n = 0;
+    int n = 1;
+    int m = 16;
     for (i = 0; i <= 15; i++) {
-        if (newSensors[i] != currentSensors[i]) {
-            unsigned int tempXor = newSensors[i] ^ currentSensors[i];
-            for (j = 0; j <=15; j++) {
-                if(tempXor & (1 << j) != 0) {
-                    printf("\nsensor %d switched ", n);
-                    n ++;
-                }    
-            }
+        if (newSensors[i] == currentSensors[i]) {
+            printf("\n---The sensors %d-%d has not switched---", n,m);
+            n += 16;
+            m += 16;
+        } else {
+            printf("\n---One or more sensors in %d-%d has switched---", n,m);
+            n += 16;
+            m += 16;
         } 
     }
 }
@@ -87,7 +87,7 @@ createArrays() {
 
 overwriteArray() {
     int i = 0;
-    for (i = 0; i < 15; i++) {
+    for (i = 0; i <= 15; i++) {
         currentSensors[i] = newSensors[i];
     }
 }
