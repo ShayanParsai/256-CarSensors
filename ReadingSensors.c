@@ -41,30 +41,17 @@ int main() {
     return 0;
 }
 
-long decimalToBinary(int decimalnum) {
-    long binarynum = 0;
-    int rem, temp = 1;
-    while (decimalnum!=0)
-    {
-        rem = decimalnum%2;
-        decimalnum = decimalnum / 2;
-        binarynum = binarynum + rem*temp;
-        temp = temp * 10;
-    }
-    return binarynum;
-}
-
 CheckActiveSensors() { // Check and alarm switched sensors
     int i = 0;
     int n = 1;
     int m = 16;
     for (i = 0; i <= 15; i++) {
         if (newSensors[i] == currentSensors[i]) {
-            printf("\n---The sensors %d-%d has not switched---", n,m);
+            printf("\n---The sensors %d-%d has NOT switched---", n,m);
             n += 16;
             m += 16;
         } else {
-            printf("\n---One or more sensors in %d-%d has switched---", n,m);
+            printf("\n---One or more sensors in %d-%d has SWITCHED---", n,m);
             n += 16;
             m += 16;
         } 
@@ -77,7 +64,7 @@ delay(int number_of_seconds) { // Creates a time delay
     while (clock() < start_time + milli_seconds);
 }
 
-createArrays() {
+createArrays() { // Creates the arrays and sets them to 0
     int i = 0;
     for (i = 0; i <= 15; i++) {
         currentSensors[i] = 0;
@@ -85,7 +72,7 @@ createArrays() {
     }
 }
 
-overwriteArray() {
+overwriteArray() { // Overwrites the currentSensors with the new ones
     int i = 0;
     for (i = 0; i <= 15; i++) {
         currentSensors[i] = newSensors[i];
